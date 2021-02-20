@@ -1,0 +1,22 @@
+<!-- nav start -->
+<nav class="am-g am-g-fixed blog-fixed blog-nav">
+	<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only blog-button"
+	 data-am-collapse="{target: '#blog-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+
+	<div class="am-collapse am-topbar-collapse" id="blog-collapse">
+		<ul class="am-nav am-nav-pills am-topbar-nav">
+			<li id="main" class="am-active"><a class="toMain" href="${_path}/articles/main">首页</a></li>
+			<li id="info"><a href="${_path}/user/userInformation">个人信息 </a></li>
+			<li id="mycomment"><a href="${_path}/user/mycomment?id=${user.userId}">我的评论</a></li>
+			<!--: if(user.userPower == 1){  -->
+			<li id="myarticles"><a href="${_path}/user/toMyA?id=${user.userId}">我的文章</a></li>
+			<!--: }  -->
+			<!--: if(user.userPower == 1){  -->
+			<li id="report"><a href="${_path}/articles/write">发表文章</a></li>
+			<!--: }  -->
+			<li id="out"><a href="${_path}/user/out">退出</a></li>
+		</ul>
+	</div>
+</nav>
+<hr>
+<!-- nav end -->

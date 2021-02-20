@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogCommentMapper">
+	<resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogComment">
+		<!-- WARNING - @mbg.generated -->
+		<id column="comment_id" jdbcType="INTEGER" property="commentId" />
+		<result column="comment_observer_id" jdbcType="INTEGER"
+			property="commentObserverId" />
+		<result column="comment_time" property="commentTime" />
+		<result column="comment_blog_id" jdbcType="INTEGER" property="commentBlogId" />
+		<result column="comment_content" jdbcType="LONGVARCHAR"
+			property="commentContent" />
+		<result column="comment_state" jdbcType="INTEGER" property="commentState" />
+	</resultMap>
+
+	<resultMap type="club.laky.blogger.pojo.BlogComment" id="AUCNameResultMap"
+		extends="BaseResultMap">
+		<result column="observer_name" property="observerName" />
+		<result column="articles_title" property="articlesTitle" />
+	</resultMap>
+
+	<!-- 携带评论者、文章信息的评论映射 -->
+	<resultMap type="club.laky.blogger.pojo.BlogComment" id="AUCResultMap"
+		extends="BaseResultMap">
+		<association property="articles"
+			javaType="club.laky.blogger.pojo.BlogArticles">
+			<id column="articles_id" jdbcType="INTEGER" property="articlesId" />
+			<result column="articles_title" jdbcType="VARCHAR" property="articlesTitle" />
+		</association>
+		<association property="blogUser" javaType="club.laky.blogger.pojo.BlogUser">
+			<id column="user_id" jdbcType="INTEGER" property="userId" />
+			<result column="user_another_name" jdbcType="VARCHAR"
+				property="userAnotherName" />
+			<result column="user_head_sculpture" jdbcType="VARCHAR"
+				property="userHeadSculpture" />
+		</association>
+	</resultMap>
+
+	<select id="queryAllInfoById" parameterType="int" resultMap="AUCResultMap">
+		select
+		c.*,a.articles_title,a.articles_id,u.user_id,u.user_another_name,u.user_head_sculpture
+		from blog_user u,blog_articles a,blog_comment c where
+		c.comment_blog_id = a.articles_id and a.articles_author_id = u.user_id
+		and c.comment_id = #{id}
+	</select>
+
+	<select id="queryAll" resultMap="AUCNameResultMap">
+		select
+		a.articles_title articles_title,u.user_another_name
+		observer_name,c.* from blog_comment c left join  blog_articles a
+		on a.articles_id = c.comment_blog_id left join blog_user u on
+		c.comment_observer_id = u.user_id
+		<if test="content != '' and content != null">
+			and (a.articles_title like '%${content}%' or
+			c.comment_content
+			like'%${content}%' or u.user_name like
+			'%${content}%')
+		</if>
+		<if test="state != null">
+			and c.comment_state = #{state}
+		</if>
+		<if test="first != null and limit != null">
+			limit #{first},#{limit}
+		</if>
+	</select>
+	<select id="queryCountAll" resultType="int">
+		select count(*) from blog_comment c left join  blog_articles a
+		on a.articles_id = c.comment_blog_id left join blog_user u on
+		c.comment_observer_id = u.user_id
+		<if test="content != '' and content != null">
+			and (a.articles_title like '%${content}%' or
+			c.comment_content
+			like'%${content}%' or u.user_name like
+			'%${content}%')
+		</if>
+		<if test="state != null">
+			and c.comment_state = #{state}
+
+		</if>
+	</select>
+</mapper>

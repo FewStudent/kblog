@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- 开启注释扫描并且移除冲突的注释 -->
+	<context:component-scan base-package="club.laky.blogger">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 开启aop注解扫描，并使用JDK代理 -->
+	<aop:aspectj-autoproxy proxy-target-class="false"></aop:aspectj-autoproxy>
+	
+	<!-- 加载数据库配置文件 -->
+	<context:property-placeholder location="classpath:config/jdbc.properties" />
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.jdbcUrl}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="driverClassName" value="${jdbc.driverClass}" />
+	</bean>
+	
+	<!-- 配置事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 配置事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*Tx" isolation="DEFAULT" propagation="REQUIRED" />
+			<tx:method name="query*" isolation="DEFAULT" propagation="REQUIRED" />
+			<tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED"/>
+			<tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED"/>
+			<tx:method name="insert*" isolation="DEFAULT" propagation="REQUIRED"/>
+			<tx:method name="select*" isolation="DEFAULT" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 配置事务通知切面 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* club.laky.blogger.service.impl.*.*(..))" id="txPC"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPC"/>
+	</aop:config>
+	
+	<!-- 配置事务模板 -->
+	<bean id="jdbcTemplete" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 配置mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+		<property name="mapperLocations" value="classpath*:mybatis/mapper/**/*.xml"></property>
+	</bean>
+	
+	<!-- 开启mapper扫描 -->
+	<mybatis-spring:scan base-package="club.laky.**.mapper"/>
+	
+	<!--<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="tk.mybatis.mapper" />
+	</bean>-->
+	
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+
+		<property name="basePackage" value="club.laky.**.mapper"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="properties">
+			<value>
+				ORDER=AFTER
+			</value>
+		</property>
+	</bean>
+	
+</beans>

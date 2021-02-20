@@ -1,0 +1,228 @@
+<!doctype html>
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>LJPBlog博客 - 我的文章</title>
+		<meta name="keywords" content="form">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+
+		<link rel="apple-touch-icon-precomposed" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<link rel="alternate icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/app.css">
+
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap-reboot.min.css" />
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+
+		<style>
+			a {
+				cursor: pointer;
+			}
+			th{
+				width: 33.3%;
+			}
+		</style>
+	</head>
+	<body>
+		<!--:include("../header.html"){}  -->
+
+		<div align="center" class="am-g am-g-fixed blog-fixed">
+
+			<div class="am-u-md-8 am-u-sm-12" id="articles">
+
+				<table class="table table-hover table-striped">
+					<thead>
+						<tr>
+							<th>文章标题</th>
+							<th>发表日期</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(article,index) in articles">
+							<td><a>{{article.articlesTitle}}</a></td>
+							<td>{{article.articlesCreateDate}}</td>
+							<td>
+								<a class="layui-btn layui-btn-primary layui-btn-sm" href="#" @click="detail(article.articlesId)">查看详情</a>
+								<a class="layui-btn layui-btn-normal layui-btn-sm" href="#" @click="update(article.articlesId)">前往修改</a>
+								<a class="layui-btn layui-btn-danger layui-btn-sm" href="#" @click="deleteArticles(article.articlesId)">删除</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<ul class="am-pagination blog-pagination">
+					<li class="am-pagination-prev am-disabled"><a @click="changePage(nowPage - 1)">&laquo; 上一页</a></li>
+
+					<li v-for="item in pages" class="am-pagination-item">
+						<a v-if="item == nowPage" href="javascript:;" @click="changePage(item)" style="background: #4890d3;color: white;">{{item}}</a>
+						<a v-else href="javascript:;" @click="changePage(item)">{{item}}</a>
+					</li>
+					<li v-if="pages == 1" class="am-pagination-next disabled"><a @click="changePage(nowPage + 1)">下一页 &raquo;</a></li>
+					<li v-else class="am-pagination-next"><a @click="changePage(nowPage + 1)">下一页 &raquo;</a></li>
+				</ul>
+			</div>
+
+			<!--:include('../righter.html'){}  -->
+		</div>
+
+		<!-- 脚注 -->
+		<!--:include("../footer.html"){}  -->
+
+	</body>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script src="${_path}/static/assets/js/amazeui.min.js"></script>
+	<script src="${_path}/static/assets/js/app.js"></script>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/ajaxfileupload.js"></script>
+	<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="${_path}/static/mine/pagehelper.js"></script>
+	<script src="${_path}/static/vue/vue.js"></script>
+	<script>
+		$('#main').removeClass('am-active');
+		$('#info').removeClass('am-active');
+		$('#myarticles').addClass('am-active');
+
+		var helper;
+		var vue = new Vue({
+			el: '#articles',
+			data: {
+				articles: [],
+				pages: 0,
+				nowPage: 1
+			},
+			created: function() {
+				var that = this;
+				$.ajax({
+					url: '${_path}/user/myArticles?id=${user.userId}',
+					type: 'post',
+					success: function(data) {
+						if (data.status) {
+							var articles = data.data;
+							sessionStorage.articles = JSON.stringify(articles);
+							helper = createPageHelper(25, articles);
+							that.$data.articles = helper.getDataByPage(1);
+							that.$data.pages = helper.getTotalPage();
+						} else {
+							console.log(data.msg);
+						}
+					},
+					error: function() {
+						console.log("请求失败");
+					}
+				})
+			},
+			watch: {
+				nowPage: function() {
+					this.articles = helper.getDataByPage(this.nowPage);
+					var first = '.am-pagination-prev';
+					var last = '.am-pagination-next';
+					if (this.nowPage > this.pages) {
+						this.nowPage = this.pages;
+					}
+					if (this.nowPage < 0) {
+						this.nowPage = 1;
+					}
+
+					$(first).removeClass('am-disabled');
+					$(last).removeClass('am-disabled');
+
+					if (this.nowPage == 1) {
+						$(first).addClass('am-disabled');
+					} else if (this.nowPage == this.pages) {
+						$(last).addClass('am-disabled');
+					}
+
+					var index = this.nowPage - 1;
+					var ele = '.blog-pagination .am-pagination-item:eq(' + index + ')';
+					$(ele).siblings().removeClass('am-active');
+					$(ele).addClass('am-active');
+				}
+			},
+			methods: {
+				changePage: function(data) {
+					this.nowPage = data;
+				},
+				deleteArticles: function(data) {
+					layui.use('layer', function() {
+						var layer = layui.layer;
+						layer.confirm("真的要删除吗?还有机会修改的嘛", {
+								title: '删除文章',
+								icon: 0,
+								btn: ['确定', '返回'],
+							},
+							function() {
+								$.ajax({
+									'url': '${_path}/articles/delete?authorId=${user.userId}&id=' + data,
+									'type': 'get',
+									success: function(data) {
+										if (data.status) {
+											layer.msg("删除成功");
+											window.location.reload();
+										} else {
+											layer.msg(data.msg);
+										}
+									},
+									error: function() {
+										layer.msg("发送请求失败");
+									}
+								})
+							},
+							function() {
+								layer.msg("已取消删除操作");
+							})
+					})
+				},
+				update: function(data) {
+					window.location.href = "${_path}/articles/toUpdate?id=" + data;
+				},
+				detail: function(data) {
+					window.location.href = "${_path}/articles/toContent?id=" + data;
+				}
+			}
+		})
+
+		function layermsg(msg) {
+			layui.use(['layer'], function() {
+				var layer = layui.layer;
+				layer.msg(msg);
+			})
+		}
+
+		$(document).ready(function() {
+			if (sessionStorage.labels == null) {
+				$.ajax({
+					'url': '${_path}/label/selectHot',
+					'type': 'get',
+					'success': function(data) {
+						sessionStorage.labels = JSON.stringify(data.data);
+						var labels = JSON.parse(sessionStorage.labels);
+						for (var i = 0; i < labels.length; i++) {
+							var ele = '.blog-tag:eq(' + i + ')';
+							$(ele).html(labels[i].labelName);
+							var href = '${_path}/articles/labelArticles?labelName=' + labels[i].labelName;
+							$(ele).attr('href', href);
+						}
+					},
+					'error': function() {
+
+					}
+				})
+			} else {
+				var labels = JSON.parse(sessionStorage.labels);
+				for (var i = 0; i < labels.length; i++) {
+					var ele = '.blog-tag:eq(' + i + ')';
+					$(ele).html(labels[i].labelName);
+					var href = '${_path}/articles/labelArticles?labelName=' + labels[i].labelName;
+					$(ele).attr('href', href);
+				}
+			}
+		})
+	</script>
+</html>

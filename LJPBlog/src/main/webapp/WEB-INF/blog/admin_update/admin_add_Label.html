@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap-grid.min.css" />
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap-reboot.min.css" />
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+
+		<script src="${_path}/static/bootstrap/js/bootstrap.bundle.mim.js"></script>
+		<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+		<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+		<script src="${_path}/static/JQuery/jquery.min.js"></script>
+
+
+		<title>添加标签</title>
+	</head>
+	<body>
+		<div style="height: 50px;"></div>
+		<div class="container">
+			<form>
+				<div class="form-group">
+					<label>标签名</label>
+					<input type="text" class="form-control" id="labelName" name="labelName" />
+				</div>
+				<button id="submit" type="button" class="btn btn-success btn-block">确定</button>
+			</form>
+		</div>
+	</body>
+	<script>
+		layui.use('layer', function() {
+			var layer = layui.layer;
+			$('#submit').click(function() {
+				if ($('#labelName').val() == '' || $('#labelName').val() == null) {
+					layermsg('标签名不能为空');
+				} else {
+					layer.confirm("确认添加该标签?", {
+						title: '确认添加',
+						icon: 0,
+						btn: ['确认', '取消']
+					}, function() {
+						var tag = $('#labelName').val();
+						$.ajax({
+							type:'post',
+							url:'${_path}/admin/label/insert?labelName=' + tag,
+							success:function(data){
+								if(data.data == 1){
+									var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+									parent.layer.close(index);
+									parent.layer.msg("已添加新的标签");
+									parent.location.reload();
+								}else{
+									layer.msg("已经有这种标签了,请不要重复添加");
+								}
+							},
+							error:function(){
+								layermsg("发生了点小错误");
+							}
+						})
+						
+					}, function() {
+						layermsg("已取消添加操作");
+					})
+				}
+
+			})
+
+			/* layer的msg提示框 */
+			function layermsg(msg) {
+				layui.use('layer', function() {
+					var layer = layui.layer;
+					layer.msg(msg, {
+						time: 5000,
+						btn: ['知道了']
+					});
+				});
+			}
+		})
+	</script>
+</html>

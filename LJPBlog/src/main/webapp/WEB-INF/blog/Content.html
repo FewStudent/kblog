@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>LJPBlog博客 - ${articles.articlesTitle}</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<link rel="apple-touch-icon-precomposed" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="msapplication-TileImage" content="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="msapplication-TileColor" content="#0e90d2">
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/app.css">
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+		<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	</head>
+
+	<body id="blog-article-sidebar">
+
+		<!--: include("../header.html"){}  -->
+		<!-- content srart -->
+		<div class="am-g am-g-fixed blog-fixed blog-content">
+			<div class="am-u-md-8 am-u-sm-12">
+				<article class="am-article blog-article-p">
+					<div class="am-article-hd">
+						<h1 class="am-article-title blog-text-center">${articles.articlesTitle}</h1>
+						<p class="am-article-meta blog-text-center">
+							<span class="blog-color">article &nbsp;</span>-
+							<span><a href="${_path}/user/userInformation?id=${articles.articlesAuthorId}">@${articles.blogUser.userAnotherName} &nbsp;</a></span>-
+							<span>${articles.articlesCreateDate}</span>
+						</p>
+					</div>
+					<div class="am-article-bd">
+						<!--: if(articles.articlesImgUrl == null || articles.articlesImgUrl == ""){  -->
+						<img src="${_path}/static/assets/i/f10.jpg" alt="" class="blog-entry-img blog-article-margin">
+						<!--: }else{  -->
+						<img src="${articles.articlesImgUrl}" alt="" class="blog-entry-img blog-article-margin">
+						<!--: }  -->
+						<p>${articles.articlesContent}</p>
+					</div>
+				</article>
+
+				<div class="am-g blog-article-widget blog-article-margin">
+					<div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">
+						<!--:if(praise == null || praise == ""){  -->
+						<button id="praise" class="am-btn am-btn-default am-btn-xs">赞</button>
+						<!--:}else{ -->
+						<button id="praise" class="am-btn am-btn-primary am-btn-xs">赞</button>
+						<!--:} -->
+						<span class="am-icon-tags"> &nbsp;</span>
+						
+						<!--: if(labels != null){ -->
+							<!--: for(label in labels){ -->
+								<a href="${_path}/articles/labelArticles?labelName=${label.labelName}">${label.labelName}&nbsp;</a> 
+							<!--: } -->
+						<!--: }else{-->
+							<a href="#">暂时没有标签</a>
+						<!--: } -->
+						<!--: if(user.userId == articles.articlesAuthorId){-->
+							<a class="btn btn-secondary insert_label" title="点击给文章添加标签" style="color: white;">+</a>
+						<!--: } -->
+						<hr>
+						<a href=""><span class="am-icon-qq am-icon-fw am-primary blog-icon"></span></a>
+						<a href=""><span class="am-icon-wechat am-icon-fw blog-icon"></span></a>
+						<a href=""><span class="am-icon-weibo am-icon-fw blog-icon"></span></a>
+					</div>
+				</div>
+
+				<hr>
+				<!-- 评论区开始 -->
+				<form id="commentForm" class="am-form am-g" action="javascript:;">
+					<input type="hidden" name="commentBlogId" value="${articles.articlesId}">
+					<input type="hidden" name="commentObserver" value="${user.userAnotherName}">
+					<input type="hidden" name="commentObserverId" value="${user.userId}">
+					<input type="hidden" name="commentCommentatorUrl" value="${user.userHeadSculpture}">
+					<input type="hidden" name="commentBlogName" value="${articles.articlesTitle}">
+					<div class="am-g am-margin-top-sm">
+						<h2 style="font:30px;">评论区</h2>
+						<br>
+						<div class="am-u-sm-12 am-u-md-">
+							<textarea id="commentContent" name="commentContent" rows="5" placeholder="请使用富文本编辑插件"></textarea>
+						</div>
+					</div>
+					<p><button id="comment" type="submit" class='am-btn am-btn-default'>发表评论</button></p>
+					<!-- 评论区结束 -->
+				</form>
+
+				<hr>
+
+				<!-- 评论区  -->
+				<!--:for(comment in comments){  -->
+				<div class='am-g blog-author blog-article-margin'>
+					<div class='am-u-sm-3 am-u-md-3 am-u-lg-2'>
+						<!--: if(comment.commenter.userHeadSculpture == null || comment.commenter.userHeadSculpture == ""){  -->
+						<a href='${_path}/user/userInformation?id=${comment.commentObserverId}'>
+							<img src='${_path}/static/assets/i/f15.jpg' alt='' class='blog-author-img am-circle'>
+						</a>
+						<!--: }else{  -->
+						<a href='${_path}/user/userInformation?id=${comment.commentObserverId}'>
+							<img src='${comment.commenter.userHeadSculpture}' alt='' class='blog-author-img am-circle'>
+						</a>
+						<!--: }  -->
+					</div>
+					<div class='am-u-sm-9 am-u-md-9 am-u-lg-10'>
+						<h3>
+							<span>评论者 &nbsp;: &nbsp;</span><span class='blog-color'>${comment.commenter.userAnotherName}</span>
+						</h3>
+						<hr>
+						<p>${comment.commentContent}</p>
+					</div>
+				</div>
+				<hr>
+				<!--: }  -->
+
+			</div>
+
+			<!--: include("../righter.html"){}  -->
+		</div>
+		<!-- content end -->
+
+		<!--: include("../footer.html"){}  -->
+
+		<script src="${_path}/static/assets/js/amazeui.min.js"></script>
+		<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+		<script src="${_path}/static/JQuery/jquery.min.js"></script>
+		<script>
+			/* 点赞事件 */
+			$('#praise').click(function() {
+				var userId = '${user.userId}';
+				var blogId = '${articles.articlesId}';
+				var pCount = $('#pCount').text();
+
+				$.ajax({
+					url: '${_path}/parise/toggle',
+					type: 'post',
+					data: JSON.stringify({
+						'praiseUserId': userId,
+						'praiseArticlesId': blogId
+					}),
+					contentType: "application/json",
+					success: function(data) {
+						if (data == 1) {
+							$('#praise').removeClass('am-btn-default');
+							$('#praise').addClass('am-btn-primary');
+							$('#pCount').text(parseInt(pCount) + 1);
+						} else {
+							$('#praise').removeClass('am-btn-primary');
+							$('#praise').addClass('am-btn-default');
+							$('#pCount').text(parseInt(pCount) - 1);
+						}
+					}
+				})
+			})
+
+			layui.use('layedit', function() {
+				var layedit = layui.layedit,
+					$ = layui.jquery;
+				var index = layedit.build('commentContent', {
+					tool: ['unlink'],
+					height: 100
+				})
+
+				/* 发表评论事件 */
+				$('#comment').click(function() {
+					var content = layedit.getContent(index);
+					$('#commentContent').val(content);
+					if (content == null || content == "" || content.length == 0) {
+						layermsg("评论内容不能为空", 0);
+					} else {
+						$.ajax({
+							url: '${_path}/comment/insert',
+							type: 'post',
+							data: JSON.stringify($('#commentForm').serializeObject()),
+							contentType: "application/json",
+							success: function(data) {
+								if(data.status){
+									sessionStorage.clear();
+									self.location.href = "${_path}/articles/toContent?id=${articles.articlesId}&type=0";
+								}else{
+									layermsg(data.msg);
+								}
+							},
+							error:function(){
+								layermsg("发送请求失败了");
+							}
+						})
+					}
+				})
+			})
+			
+
+			$('.insert_label').click(function(){
+				layui.use('layer',function(){
+					var layer = layui.layer;
+					layer.open({
+						type:2,
+						title:'添加文章标签',
+						maxmin:true,
+						area:['400px','300px'],
+						content:'${_path}/balabel/toInsert?articlesId=${articles.articlesId}'
+					})
+				})
+			})
+
+			/* form表单内容转换为json对象的方法 */
+			$.fn.serializeObject = function() {
+				var o = {};
+				var a = this.serializeArray();
+				$.each(a, function() {
+					if (o[this.name]) {
+						if (!o[this.name].push) {
+							o[this.name] = [o[this.name]];
+						}
+						o[this.name].push(this.value || '');
+					} else {
+						o[this.name] = this.value || '';
+					}
+				});
+				return o;
+			};
+
+			/* layer的msg函数 */
+			function layermsg(msg, type) {
+				layui.use('layer', function() {
+					var layer = layui.layer;
+					if (type == 1) {
+						layer.msg(msg);
+					} else {
+						layer.msg(msg, {
+							time: 5000,
+							btn: ['知道了', '返回']
+						});
+					}
+
+				});
+			}
+			$(document).ready(function() {
+				if (sessionStorage.labels == null) {
+					$.ajax({
+						'url': '${_path}/label/selectHot',
+						'type': 'get',
+						'success': function(data) {
+							sessionStorage.labels = JSON.stringify(data.data);
+							var labels = JSON.parse(sessionStorage.labels);
+							for (var i = 0; i < labels.length; i++) {
+								var ele = '.blog-tag:eq(' + i + ')';
+								$(ele).html(labels[i].labelName);
+								var href = '${_path}/articles/labelArticles?labelName=' + labels[i].labelName;
+								$(ele).attr('href', href);
+							}
+						},
+						'error': function() {
+							
+						}
+					})
+				} else {
+					var labels = JSON.parse(sessionStorage.labels);
+					for (var i = 0; i < labels.length; i++) {
+						var ele = '.blog-tag:eq(' + i + ')';
+						$(ele).html(labels[i].labelName);
+						var href = '${_path}/articles/labelArticles?labelName=' + labels[i].labelName;
+						$(ele).attr('href', href);
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

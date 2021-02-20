@@ -1,0 +1,130 @@
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>LJPBlog后台管理</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="alternate icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<style>
+			.header {
+				  text-align: center;
+			}
+			.header h1 {
+				 font-size: 200%;
+				 color: #333;
+				 margin-top: 30px;
+			}
+			.header p {
+				 font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<!-- 登陆界面顶部开始 -->
+			<div class="am-g">
+				<h1>欢迎来到LJPBlog后台管理</h1>
+			</div>
+			<!-- 登陆界面顶部结束 -->
+			<hr />
+		</div>
+
+		<div class="am-g">
+			<div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+				<h3>登录</h3>
+				<hr>
+				<!-- 登陆表单开始 -->
+				<form method="post" id="loginForm" class="am-form">
+					<label for="account">账号:</label>
+					<input type="text" name="account" id="account">
+					<br>
+					<label for="password">密码:</label>
+					<input type="password" name="password" id="password">
+					<br>
+					<div class="am-cf">
+						<input type="submit" name="login" value="登 录" class="am-btn am-btn-primary am-btn-sm am-fl">
+					</div>
+				</form>
+				<!-- 登陆表单结束 -->
+				<hr>
+			</div>
+		</div>
+		<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+		<script src="${_path}/static/JQuery/jquery.min.js"></script>
+		<script>
+			sessionStorage.clear();
+			/* 鼠标移开用户名的事件	验证用户名的输入 */
+			$('#account').mouseleave(function() {
+				var name = $('#account').val();
+				if (name == null || name.length == 0 || name == "") {
+					state = 0;
+					layermsg("用户名不能为空");
+				}
+			});
+			
+			/* 鼠标移开密码的事件	验证密码的输入 */
+			$('#userPassword').mouseleave(function() {
+				var password = $('#userPassword').val();
+				if (password == null || password.length == 0 || password == "") {
+					state = 0;
+					layermsg("密码不能为空");
+				}
+				if (password.length > 14) {
+					layermsg("密码过长");
+				}
+			})
+			
+			$('#loginForm').submit(function() {
+				$.ajax({
+					url: '${_path}/admin/manager/verify',
+					type: 'post',
+					data: JSON.stringify($('#loginForm')
+						.serializeObject()),
+					contentType: "application/json",
+					success: function(res) {
+						if(res.status){
+							layermsg("登陆成功")
+							sessionStorage.setItem("admin",JSON.stringify(res.data));
+							window.location.href = "${_path}/admin/manager/manage";
+						}else{
+							layermsg(res.data);
+						}
+					}
+				})
+				return false;
+			})
+			
+			/* form表单内容转换为json对象的方法 */
+			$.fn.serializeObject = function() {
+				var o = {};
+				var a = this.serializeArray();
+				$.each(a, function() {
+					if (o[this.name]) {
+						if (!o[this.name].push) {
+							o[this.name] = [o[this.name]];
+						}
+						o[this.name].push(this.value || '');
+					} else {
+						o[this.name] = this.value || '';
+					}
+				});
+				return o;
+			};
+			
+			/** layer错误提示函数 */
+			function layermsg(msg) {
+				layui.use('layer', function() {
+					var layer = layui.layer;
+					layer.msg(msg, {
+						time: 5000,
+						btn: ['知道了', '返回']
+					});
+				});
+			}
+		</script>
+</html>

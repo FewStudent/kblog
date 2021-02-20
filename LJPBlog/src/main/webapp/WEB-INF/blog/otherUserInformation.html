@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>LJPBlog博客 - ${otherUser.userAnotherName}的个人信息</title>
+		<meta name="description" content="这是访问其他用户信息的页面">
+		<meta name="keywords" content="form">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<link rel="apple-touch-icon-precomposed" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<link rel="alternate icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/app.css">
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+		<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<!--:include("../header.html"){}  -->
+
+		<div class="am-cf admin-main">
+
+			<!-- 内容开始 -->
+			<div class="admin-content">
+				<div class="admin-content-body">
+
+					<div class="am-u-sm-12 am-u-md-4 am-u-md-push-8">
+						<div class="am-panel am-panel-default">
+							<div class="am-panel-bd">
+								<div class="am-g">
+									<div class="am-u-md-4">
+										<img class="am-img-circle am-img-thumbnail" src="${_path}/static/assets/i/f12.jpg" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 用户等级信息开始 -->
+						<div class="am-panel am-panel-default">
+							<div class="am-panel-bd">
+								<div class="user-info">
+									<p>等级信息</p>
+									<div class="am-progress am-progress-sm">
+										<div class="am-progress-bar" style="width: ${otherUser.userExperience % 100}%"></div>
+									</div>
+									<p class="user-info-order">当前等级：<strong>LV${otherUser.userLevel}</strong> 距离下一级别：<strong>${otherUser.userLevel
+											>= 99 ? 0 : 100 - otherUser.userExperience % 100}</strong></p>
+								</div>
+
+							</div>
+						</div>
+						<!-- 用户等级信息结束 -->
+
+					</div>
+
+					<!-- 用户信息开始 -->
+					<div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
+						<div class="am-tabs am-margin" data-am-tabs>
+
+							<div class="am-tab-panel am-fade am-in am-active">
+								<form id="form" class="am-form am-form-horizontal" action="javascript:;">
+
+									<!-- 用户别名开始 -->
+									<div class="am-form-group">
+										<label for="user-name" class="am-u-sm-3 am-form-label">别名 / Name</label>
+										<div class="am-u-sm-9">
+
+											<input disabled="disabled" type="text" name="userAnotherName" id="userAnotherName" value="${otherUser.userAnotherName}"
+											 placeholder="姓名 / Name">
+											<small>输入你的名字，让我们记住你。</small>
+										</div>
+									</div>
+									<!-- 用户别名结束 -->
+
+									<br>
+
+									<!-- 用户邮箱开始 -->
+									<div class="am-form-group">
+										<label for="user-email" class="am-u-sm-3 am-form-label">电子邮件 / Email</label>
+										<div class="am-u-sm-9">
+											<input disabled="disabled" type="email" name="userEmail" id="userEmail" value="${otherUser.userEmail}"
+											 placeholder="这人很懒,没有留下邮箱 / Email">
+											<small>邮箱你懂得...</small>
+										</div>
+									</div>
+									<!-- 用户邮箱结束 -->
+
+									<br>
+
+									<!-- 用户电话开始 -->
+									<div class="am-form-group">
+										<label for="user-phone" class="am-u-sm-3 am-form-label">电话 / Telephone</label>
+										<div class="am-u-sm-9">
+											<input disabled="disabled" type="tel" name="userPhone" id="userPhone" value="${otherUser.userPhone}"
+											 placeholder="这人很懒,没有留下电话 / Telephone">
+										</div>
+									</div>
+									<!-- 用户电话结束 -->
+
+									<br>
+
+									<!-- 用户简介开始 -->
+									<div class="am-form-group">
+										<label for="user-intro" class="am-u-sm-3 am-form-label">简介 / Intro</label>
+										<div class="am-u-sm-9">
+											<textarea disabled="disabled" class="" rows="5" name="userAbstract" id="userAbstract" placeholder="输入个人简介">${otherUser.userAbstract}</textarea>
+											<small>这人比较腼腆,不想告诉我们Ta的经历...</small>
+										</div>
+									</div>
+									<!-- 用户简介结束 -->
+
+									<br>
+
+									<div class="am-form-group">
+									</div>
+								</form>
+								<!-- 表单结束 -->
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<!-- 内容结束 -->
+
+			</div>
+		</div>
+		<!-- 脚注 -->
+		<!--:include("../footer.html"){}  -->
+
+	</body>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script src="${_path}/static/assets/js/amazeui.min.js"></script>
+	<script src="${_path}/static/assets/js/app.js"></script>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/ajaxfileupload.js"></script>
+	<script>
+		/* form表单内容转换为json对象的方法 */
+		$.fn.serializeObject = function() {
+			var o = {};
+			var a = this.serializeArray();
+			$.each(a, function() {
+				if (o[this.name]) {
+					if (!o[this.name].push) {
+						o[this.name] = [o[this.name]];
+					}
+					o[this.name].push(this.value || '');
+				} else {
+					o[this.name] = this.value || '';
+				}
+			});
+			return o;
+		};
+
+		function layermsg(msg) {
+			layui.use(['layer'], function() {
+				var layer = layui.layer;
+				layer.msg(msg);
+			})
+		}
+	</script>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>LJPBlog博客 - 用户管理</title>
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<!--头部-->
+			<!--:include("../parts/admin_header.html"){}-->
+
+			<!--左侧导航栏-->
+			<!--:include("../parts/admin_left.html"){}-->
+
+			<div class="layui-body">
+				<!--此处为内容部分-->
+				<div style="padding: 15px;">
+
+					<!--表头操作开始-->
+					<blockquote class="layui-elem-quote  layui-quote-nm layui-form">
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" id="keyText" placeholder="请输入用户别名" class="layui-input search_input">
+							</div>
+						</div>
+						<div class="layui-input-inline">
+							<select id="state">
+								<option value="">状态</option>
+								<option value="0">审核中</option>
+								<option value="1">正常</option>
+								<option value="2">冻结</option>
+							</select>
+						</div>
+
+						<div class="layui-input-inline">
+							<select id="power">
+								<option value="">权限</option>
+								<option value="1">博主</option>
+								<option value="2">用户</option>
+							</select>
+						</div>
+
+						<div class="layui-inline">
+							<a class="layui-btn search_btn">查询</a>
+						</div>
+					</blockquote>
+					<!-- 表头操作结束 -->
+
+					<!-- 表格开始 -->
+					<div class="layui-tab" lay-filter="user" lay-allowclose="true">
+						<table id="user" lay-filter="user"></table>
+					</div>
+					<!-- 表格结束 -->
+
+					<!-- 操作 -->
+					<script type="text/html" id="user_bar">
+						<a class="layui-btn layui-btn-xs" lay-event="thaw">解冻</a>
+						<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="allow">授权</a>
+						<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="relieve">收权</a>
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="freeze">冻结</a>
+					</script>
+
+				</div>
+			</div>
+
+
+
+			<!--底部footer-->
+			<!--:include("../parts/admin_footer.html"){}-->
+
+		</div>
+
+	</body>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script>
+		$('#left_user').css('background', '#009688');
+		$('#left_user').css('color', '#fff');
+		layui.use(['table', 'form', 'element', 'layer'], function() {
+			var table = layui.table;
+			var layer = layui.layer;
+			var element = layui.element;
+			var manager = JSON.parse(sessionStorage.getItem("admin"));
+			
+			/* 表格数据载入 */
+			table.render({
+				elem: '#user',
+				url: '${_path}/admin/user/page' //数据接口
+					,
+				width: 1120,
+				height: 450,
+				page: true //开启分页
+					,
+				cols: [
+					[ //表头
+						{
+							field: 'userId',
+							title: 'ID',
+							width: 160,
+							sort: true,
+							fixed: 'left'
+						}, {
+							field: 'userName',
+							title: '用户名',
+							width: 80
+						}, {
+							field: 'userAnotherName',
+							title: '用户别名',
+							width: 120
+						}, {
+							field: 'userLevel',
+							title: '用户等级',
+							width: 160,
+							sort: true
+						}, {
+							field: 'userExperience',
+							title: '用户经验值',
+							width: 160
+						}, {
+							field: 'userPhone',
+							title: '用户电话号码',
+							width: 160
+						}, {
+							field: 'userEmail',
+							title: '用户邮箱',
+							width: 160
+						}, {
+							field: 'userAbstract',
+							title: '个人简介',
+							width: 100
+						}, {
+							field: 'userCreatDate',
+							title: '用户创建日期',
+							width: 180,
+							sort: true
+						}, {
+							field: 'userState',
+							title: '用户状态',
+							width: 100,
+							templet: '<div>{{stateName(d.userState)}}</div>',
+							fixed: 'right'
+						}, {
+							field: 'userPower',
+							title: '用户权限',
+							width: 100,
+							templet: '<div>{{powerName(d.userPower)}}</div>',
+							fixed: 'right'
+						}, {
+							field: '',
+							title: '操作',
+							align: 'center',
+							width: 220,
+							toolbar: '#user_bar',
+							fixed: 'right'
+						}
+					]
+				],
+				id: 'Reload', //表格重载的id
+			});
+
+			/* 表格重载 */
+			$('.search_btn').on('click', function() {
+				table.reload('Reload', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					},
+					where: {
+						power: $('#power').val(),
+						state: $('#state').val(),
+						content: $('#keyText').val()
+					}
+				});
+			});
+
+			/*	表格操作的事件	*/
+			table.on('tool(user)', function(obj) {
+				var data = obj.data,
+					layEvent = obj.event;
+				if (layEvent === "thaw") {
+					if (data.userState == '1') {
+						layermsg("该用户不是冻结状态,不需要解冻!");
+						return;
+					}
+					layer.confirm("是否解冻该用户", {
+						title: '解冻确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/user/thaw?id=' + data.userId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("解冻成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("已取消解冻操作");
+					});
+				} else if (layEvent === "allow") {
+					if (data.userPower == 3 || data.userPower == 1) {
+						layermsg("用户已经授权了,无需再授权!");
+						return;
+					}
+					layer.confirm("是否授权该用户", {
+						title: '授权确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/user/allow?id=' + data.userId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("授权成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("取消授权操作");
+					});
+				} else if (layEvent === "relieve") {
+					if (data.userPower == 2) {
+						layermsg('用户权利已收回,无需再收回!');
+					}
+					layer.confirm("是否收回该用户的权限", {
+						title: '收权确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/user/relieve?id=' + data.userId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("收权成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("已取消收权操作");
+					});
+				} else if (layEvent === "freeze") {
+					if (data.userState == 2) {
+						layermsg('用户已经冻结了,不需要再冻结!');
+					}
+					layer.confirm("是否冻结该用户", {
+						title: '冻结确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/user/freeze?id=' + data.userId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("冻结成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("已取消冻结操作");
+					});
+				}
+			});
+
+		});
+
+		/* 用户状态的格式化 */
+		function stateName(state) {
+			switch (state) {
+				case 0:
+					return "审核中";
+				case 1:
+					return "正常";
+				case 2:
+					return "冻结";
+				default:
+					return "";
+			}
+		}
+
+		/* 用户权限的格式化 */
+		function powerName(power) {
+			switch (power) {
+				case 1:
+					return "博主";
+				case 2:
+					return "用户";
+				default:
+					return "";
+			}
+
+		}
+
+		/* layer的msg提示框 */
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg, {
+					time: 5000,
+					btn: ['知道了', '返回']
+				});
+			});
+		}
+	</script>
+</html>

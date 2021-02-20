@@ -1,0 +1,319 @@
+<!doctype html>
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>LJPBlog博客 - 发表文章</title>
+		<meta name="description" content="这是一个form页面">
+		<meta name="keywords" content="form">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<link rel="apple-touch-icon-precomposed" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<link rel="alternate icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/app.css">
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+		<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<!--:include("../header.html"){}  -->
+
+		<div class="am-cf admin-main">
+
+			<!-- 内容开始 -->
+			<div class="admin-content">
+				<div class="admin-content-body">
+
+					<div class="am-tabs am-margin" data-am-tabs>
+
+						<div class="am-tab-panel am-fade am-in am-active">
+							<form id="form" class="am-form" action="#">
+								<!-- 文章的隐藏信息开始 -->
+								<!--: if(id == null){ -->
+									<input id="imgUrl" type="hidden" name="articlesImgUrl" value="null">
+								<!--: } else{-->
+									<input type="hidden" name="articlesId" value="${id}" />
+								<!--: } -->
+								<input type="hidden" name="articlesAuthor" value="${user.userAnotherName}">
+								<input type="hidden" name="articlesAuthorId" value="${user.userId}">
+								<!-- 文章的隐藏信息结束 -->
+
+								<!-- 文章标题开始 -->
+								<div class="am-g am-margin-top">
+									<div class="am-u-sm-4 am-u-md-2 am-text-right">文章标题</div>
+									<div class="am-u-sm-8 am-u-md-4">
+										<input id="articlesTitle" name="articlesTitle" type="text" class="am-input-sm">
+									</div>
+									<div class="am-hide-sm-only am-u-md-6">*必填</div>
+								</div>
+
+								<!-- 各类选项开始 -->
+								<!--<div class="am-g am-margin-top">
+									<div class="am-u-sm-4 am-u-md-2 am-text-right">能否评论</div>
+									<div class="am-u-sm-8 am-u-md-10">
+										<div class="am-btn-group" data-am-button>
+											<label id="commentable0" class="am-btn am-btn-default am-btn-xs"> <input type="radio" name="articlesCommentable"
+												 value="0">不可评论
+											</label> <label id="commentable1" class="am-btn am-btn-default am-btn-xs am-btn-primary"> <input type="radio"
+												 name="articlesCommentable" value="1">可评论
+											</label>
+										</div>
+									</div>
+								</div>-->
+
+								<div class="am-g am-margin-top">
+									<div class="am-u-sm-4 am-u-md-2 am-text-right">文章类型</div>
+									<div class="am-u-sm-8 am-u-md-10">
+										<div class="am-btn-group artType" data-am-button>
+											<label id="type0" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesType" value="技术"> 技术
+											</label>
+											<label id="type1" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesType" value="生活">生活
+											</label>
+											<label id="type2" class="am-btn am-btn-default am-btn-xs am-btn-primary">
+												<input type="radio" name="articlesType" checked="checked" value="其他">其他
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<!--<div class="am-g am-margin-top">
+									<div class="am-u-sm-4 am-u-md-2 am-text-right">显示状态</div>
+									<div class="am-u-sm-8 am-u-md-10">
+										<div class="am-btn-group" data-am-button>
+											<label id="state0" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesState" value="0">
+												待审核
+											</label>
+											<label id="state1" class="am-btn am-btn-default am-btn-xs am-btn-primary">
+												<input type="radio" name="articlesState" value="1">
+												正常
+											</label>
+											<label id="state2" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesState" value="2">
+												屏蔽
+											</label>
+										</div>
+									</div>
+								</div>-->
+
+								<!--<div class="am-g am-margin-top">
+									<div class="am-u-sm-4 am-u-md-2 am-text-right">置顶情况</div>
+									<div class="am-u-sm-8 am-u-md-10">
+										<div class="am-btn-group" data-am-button>
+											<label id="stick0" class="am-btn am-btn-default am-btn-xs am-btn-primary">
+												<input type="radio" name="articlesIsstick" value="0">
+												不置顶
+											</label>
+											<label id="stick1" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesIsstick" value="1">
+												首页置顶
+											</label>
+											<label id="stick2" class="am-btn am-btn-default am-btn-xs">
+												<input type="radio" name="articlesIsstick" value="2">
+												分类置顶
+											</label>
+										</div>
+									</div>
+								</div>->
+								<!-- 文章选项结束 -->
+
+								<!-- 文章内容开始 -->
+								<div class="am-g am-margin-top-sm">
+									<div class="am-u-sm-12 am-u-md-2 am-text-right admin-form-text">
+										内容描述</div>
+									<div class="am-u-sm-12 am-u-md-10">
+										<textarea id="articlesContent" class="articlesContent" name="articlesContent" rows="25" placeholder="请使用富文本编辑插件"></textarea>
+									</div>
+								</div>
+								<!-- 文章内容结束 -->
+
+
+							</form>
+							<!-- 表单结束 -->
+							<br>
+							<!-- 图片上传表单开始 -->
+							<!--: if(id == null){ -->
+								<form action="javaScript:;" class="am-form" enctype="multipart/form-data">
+									<div align="center">
+										<input id="file_upload" name="files" type="file">
+									</div>
+								</form>
+							<!--: }-->
+							<!-- 图片上传表单结束 -->
+							<br>
+						</div>
+						<!-- 发表按钮 -->
+						<div class="am-margin" align="center">
+							<!--: if(id == null){ -->
+								<input id="submit" type="button" class="am-btn am-btn-primary am-btn-sm" value="发表">
+							<!--: }else{-->
+								<input id="submit" type="button" class="am-btn am-btn-primary am-btn-sm" value="修改">
+							<!--: }-->
+						</div>
+					</div>
+				</div>
+				<!-- 内容结束 -->
+
+			</div>
+		</div>
+		<!-- 脚注 -->
+		<!--:include("../footer.html"){}  -->
+
+	</body>
+	<script src="${_path}/static/assets/js/amazeui.min.js"></script>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script src="${_path}/static/JQuery/ajaxfileupload.js"></script>
+	<script>
+		$('#main').removeClass('am-active');
+		$('#info').removeClass('am-active');
+		$('#report').addClass('am-active');
+		
+		layui.use('layedit', function() {
+			var layedit = layui.layedit;
+			
+			layedit.set({
+				uploadImage: {
+					url: '${_path}/image/layuiUpload',
+					type:'post'
+				}
+			});
+			var index = layedit.build('articlesContent');
+			
+			console.log('${id}');
+			console.log('${id}' != null);
+			/* 初始化修改文章的表单填充 */
+			if('${id}' != null){
+				$.ajax({
+					url:'${_path}/articles/updateOne?id=${id}',
+					type:'get',
+					success:function(data){
+						if(data.status){
+							var article = data.data;
+							$('.am-input-sm').val(article.articlesTitle);
+							var types = $('.artType input');
+							for (var i = 0; i < types.length; i++) {
+								if(types[i].value == article.articlesType){
+									var element = '.artType input:eq(' + i + ')';
+									$(element).click();
+								}
+							}
+							layedit.setContent(index, article.articlesContent);
+						}else{
+							console.log(data.msg);
+						}
+					},
+					error:function(data){
+						layermsg("发送请求失败");
+					}
+				})
+			}
+			
+			/* 文章发表事件 */
+			$('#submit').click(
+				function() {
+					var title = $('#articlesTitle').val();
+					var content = layedit.getContent(index);
+					$('#articlesContent').val(content);
+					if (null == title || "" == title || title.length == 0) {
+						layermsg("文章标题不能为空");
+						return false;
+					} else if (null == content || "" == content ||
+						content.length == 0) {
+						layermsg("文章内容不能为空");
+						return false;
+					} else {
+						layui.use(['layer'], function() {
+							var layer = layui.layer;
+							layer.open({
+								title: "确认发表文章",
+								content: "即将发表文章，若有选项没选，将视为默认选择",
+								btn: ['确定', '取消'],
+								yes: function() {
+									if('${id}' == null || '${id}' == ""){
+										/** 先上传文件 */
+										$.ajaxFileUpload({
+											url: '${_path}/image/upload',
+											secureuri: false,
+											fileElementId: 'file_upload',
+											dataType: 'jsonp',
+											data: {
+												'pictureRelatedId': null
+											},
+											success: function(data) {
+												$('#imgUrl').val(data);
+												/* 文件上传成功后 正式发表文章 */
+												$.ajax({
+													url: '${_path}/articles/insert',
+													type: 'post',
+													data: JSON.stringify($('#form')
+														.serializeObject()),
+													contentType: "application/json",
+													success: function(data) {
+														layermsg("发表成功");
+														window.location.href = "${_path}/articles/main";
+													}
+												})
+											}
+										})
+									}else{
+										$.ajax({
+											url: '${_path}/articles/updateAll',
+											type: 'post',
+											data: JSON.stringify($('#form')
+												.serializeObject()),
+											contentType: "application/json",
+											success: function(data) {
+												layermsg("发表成功");
+												window.location.href = "${_path}/articles/main";
+											}
+										})
+									}
+									
+								}
+							})
+						})
+					}
+					return false;
+				})
+		})
+
+		$('.am-btn-group label').click(function() {
+			$(this).siblings().removeClass("am-btn-primary");
+			var index = $(this).addClass('am-btn-primary');
+		})
+
+		/* form表单内容转换为json对象的方法 */
+		$.fn.serializeObject = function() {
+			var o = {};
+			var a = this.serializeArray();
+			$.each(a, function() {
+				if (o[this.name]) {
+					if (!o[this.name].push) {
+						o[this.name] = [o[this.name]];
+					}
+					o[this.name].push(this.value || '');
+				} else {
+					o[this.name] = this.value || '';
+				}
+			});
+			return o;
+		};
+
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg, {
+					time: 5000,
+					btn: ['知道了', '返回']
+				});
+			});
+		}
+	</script>
+</html>

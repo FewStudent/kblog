@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogArticlesLabelMapper">
+	<resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogArticlesLabel">
+		<!-- WARNING - @mbg.generated -->
+		<id column="blog_l_a_id" jdbcType="INTEGER" property="blogLAId" />
+		<result column="label_id" jdbcType="INTEGER" property="labelId" />
+		<result column="articles_id" jdbcType="INTEGER" property="articlesId" />
+		<result column="bal_state" jdbcType="INTEGER" property="balState" />
+	</resultMap>
+	<!-- 携带文章标题、标签名的联合映射 -->
+	<resultMap type="club.laky.blogger.pojo.BlogArticlesLabel"
+		id="LAResultMap" extends="BaseResultMap">
+		<result column="articles_title" jdbcType="VARCHAR" property="articlesTitle" />
+		<result column="label_name" jdbcType="VARCHAR" property="labelName" />
+	</resultMap>
+
+	<!-- 查询所有文章标签的具体内容 -->
+	<select id="queryAll" resultMap="LAResultMap">
+		select
+		a.articles_title,l.label_name,al.*
+		from blog_articles a,blog_articles_label al,blog_label l
+		where a.articles_id =
+		al.articles_id and al.label_id = l.label_id
+		<if test="title != null and title != ''">
+			and a.articles_title like '%${title}%'
+		</if>
+		<if test="label != null and label != ''">
+			and l.label_name like '%${label}%'
+		</if>
+		<if test="state != null">
+			and al.bal_state = #{state}
+		</if>
+		<if test="first != null and limit != null">
+			limit #{first},#{limit}
+		</if>
+	</select>
+	
+	<!-- 查询所有文章标签的数量 -->
+	<select id="queryAllCount" resultType="int">
+		select
+		count(*) from blog_articles
+		a,blog_articles_label al,blog_label l
+		where a.articles_id =
+		al.articles_id and al.label_id = l.label_id
+		<if test="title != null and title != ''">
+			and a.articles_title like '%${title}%'
+		</if>
+		<if test="label != null and label != ''">
+			and l.label_name like '%${label}%'
+		</if>
+		<if test="state != null">
+			and al.bal_state = #{state}
+		</if>
+	</select>
+
+	<update id="update">
+		update blog_articles_label set bal_state = #{state}
+		where blog_l_a_id = #{id}
+	</update>
+</mapper>

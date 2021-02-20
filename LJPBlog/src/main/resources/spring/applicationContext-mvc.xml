@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- 开启扫描注解 -->
+	<context:component-scan base-package="club.laky.blogger">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 开启springmvc controller注解扫描的映射支持 -->
+	<mvc:annotation-driven>
+		<mvc:async-support default-timeout="30000"></mvc:async-support>
+	</mvc:annotation-driven>
+	
+	<!-- 静态资源文件支持 -->
+	<mvc:default-servlet-handler/>
+	
+	<bean id="beetlConfig" class="org.beetl.ext.spring.BeetlGroupUtilConfiguration" init-method="init">
+		<property name="configFileResource" value="classpath:config/beetl.properties"></property>
+	</bean>
+	
+	<bean class="org.beetl.ext.spring.BeetlSpringViewResolver">
+		<property name="viewNames">
+			<list>
+				<value>/**</value>
+			</list>
+		</property>
+		<property name="order" value="0"></property>
+		<property name="contentType" value="text/html;charset=UTF-8"></property>
+		<property name="suffix" value=".html"></property>
+		<property name="prefix" value="/WEB-INF"></property>
+		<property name="config" ref="beetlConfig"></property>
+	</bean>
+	
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+	
+	<!-- 配置拦截器 -->
+	<mvc:interceptors>
+		<!-- 登陆拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/user/login"/>
+			<mvc:exclude-mapping path="/user/regist"/>
+			<mvc:exclude-mapping path="/user/verify"/>
+			<mvc:exclude-mapping path="/user/toRegist"/>
+			<mvc:exclude-mapping path="/user/insert"/>
+			<mvc:exclude-mapping path="/admin/**"/>
+			<mvc:exclude-mapping path="/blog/admin/login"/>
+			<mvc:exclude-mapping path="/image/**"/>
+			<mvc:exclude-mapping path="/**/*.js"/>
+			<mvc:exclude-mapping path="/**/*.css"/>
+			<mvc:exclude-mapping path="/**/*.png"/>
+			<mvc:exclude-mapping path="/**/*.jpg"/>
+			<bean class="club.laky.blogger.interceptor.LoginInterceptor"></bean>
+		</mvc:interceptor>
+		<!-- 后台管理权限拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/admin/**"/>
+			<mvc:exclude-mapping path="/admin/manager/login"/>
+			<mvc:exclude-mapping path="/admin/manager/verify"/>
+			<bean class="club.laky.blogger.admin.interceptor.AdminInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>

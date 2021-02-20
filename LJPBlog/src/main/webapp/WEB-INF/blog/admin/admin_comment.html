@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>LJPBlog博客 - 评论管理</title>
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<!--头部-->
+			<!--:include("../parts/admin_header.html"){}-->
+
+			<!--左侧导航栏-->
+			<!--:include("../parts/admin_left.html"){}-->
+
+			<div class="layui-body">
+				<!--此处为内容部分-->
+				<div style="padding: 15px;">
+
+					<!-- 表头操作开始 -->
+					<blockquote class="layui-elem-quote  layui-quote-nm layui-form">
+						<!--表头操作-->
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" id="keyText" placeholder="请输入评论相关内容" class="layui-input search_input">
+							</div>
+						</div>
+						<div class="layui-input-inline">
+							<select id="state">
+								<option value="">状态</option>
+								<option value="1">正常</option>
+								<option value="0">屏蔽</option>
+							</select>
+						</div>
+
+						<div class="layui-inline">
+							<a class="layui-btn search_btn">查询</a>
+						</div>
+					</blockquote>
+					<!-- 表头操作结束 -->
+
+					<!-- 表格开始 -->
+					<div class="layui-tab" lay-filter="comment" lay-allowclose="true">
+						<table id="comment" lay-filter="comment"></table>
+					</div>
+					<!-- 表格结束 -->
+
+					<!-- 操作 -->
+					<script type="text/html" id="comment_bar">
+						<a class="layui-btn layui-btn-xs" lay-event="allow">可见</a>
+						<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="details">详情</a>
+						<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="shield">屏蔽</a>
+						<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+					</script>
+
+				</div>
+			</div>
+
+
+
+			<!--底部footer-->
+			<!--:include("../parts/admin_footer.html"){}-->
+
+		</div>
+	</body>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script>
+		$('#left_comment').css('background', '#009688');
+		$('#left_comment').css('color', '#fff');
+		layui.use(['table', 'form', 'element', 'layer'], function() {
+			var table = layui.table;
+			var layer = layui.layer;
+			var element = layui.element;
+			var manager = JSON.parse(sessionStorage.getItem("admin"));
+
+			/* 载入表格 */
+			table.render({
+				elem: '#comment',
+				url: '${_path}/admin/comment/page' //数据接口
+					,
+				width: 1120,
+				height: 450,
+				page: true //开启分页
+					,
+				cols: [
+					[ //表头
+						{
+							field: 'commentId',
+							title: 'ID',
+							width: 160,
+							sort: true,
+							fixed: 'left'
+						}, {
+							field: 'observerName',
+							title: '评论者',
+							width: 160
+						},  {
+							field: 'commentTime',
+							title: '评论时间',
+							width: 160
+						},  {
+							field: 'articlesTitle',
+							title: '被评论博客标题',
+							width: 160,
+							templet: '<div>{{titleState(d.articlesTitle)}}</div>',
+						}, {
+							field: 'commentContent',
+							title: '评论内容',
+							width: 200,
+							sort: true
+						}, {
+							field: 'commentState',
+							title: '状态',
+							width: 80,
+							templet: '<div>{{stateName(d.commentState)}}</div>',
+							fixed: 'right'
+						}, {
+							field: '',
+							title: '操作',
+							align: 'center',
+							width: 210,
+							toolbar: '#comment_bar',
+							fixed: 'right'
+						}
+					]
+				],
+				id: 'Reload',
+			});
+
+			/*	表格的重载	*/
+			$('.search_btn').on('click', function() {
+				table.reload('Reload', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					},
+					where: {
+						state: $('#state').val(),
+						content: $('#keyText').val()
+					}
+				});
+			});
+
+			/* 表格操作事件 */
+			table.on('tool(comment)', function(obj) {
+				var data = obj.data,
+					layEvent = obj.event;
+				/* 屏蔽事件 */
+				if (layEvent === "shield") {
+					if (data.commentState == '0') {
+						layermsg("该文章已经被屏蔽了,不需要再屏蔽!");
+						return;
+					}
+					layer.confirm("是否屏蔽该评论", {
+						title: '屏蔽确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/comment/down?id=' + data.commentId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("屏蔽成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("已取消屏蔽操作");
+					});
+					/* 修改事件 */
+				} else if (layEvent === "allow") {
+					if (data.commentState == 1) {
+						layermsg("评论为正常,不需要修改!");
+						return;
+					}
+					layer.confirm("是否让该评论可见", {
+						title: '评论授权确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/comment/allow?id=' + data.commentId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("修改成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("取消修改操作");
+					});
+				} else if (layEvent == "delete") {
+					if (manager.power != 1) {
+						layermsg("你无权删除数据");
+					} else {
+						layer.confirm("是否删除该评论", {
+								title: '评论删除确认',
+								icon: 0,
+								btn: ['确定', '返回']
+							},
+							function() {
+								$.ajax({
+									type: "post",
+									url: '${_path}/admin/comment/delete?id=' + data.commentId,
+									async: true,
+									success: function(data) {
+										if (data.status == 1) {
+											layer.msg("删除成功");
+										} else {
+											layer.msg(data.msg);
+										}
+										$(".layui-laypage-btn").click();
+									}
+								})
+							},
+							function() {
+								layermsg("已经取消了删除");
+							})
+					}
+
+				}
+			});
+
+		});
+
+		/*	评论状态的格式化	*/
+		function stateName(state) {
+			switch (state) {
+				case 1:
+					return "正常";
+				case 0:
+					return "屏蔽";
+				default:
+					return "";
+			}
+		}
+		
+		function titleState(text){
+			if(text == null || text == ''){
+				return "<p style='color:red;'>文章已经被删除</p>";
+			}else{
+				return text;
+			}
+		}
+
+		/*	layer的msg提示	*/
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg, {
+					time: 5000,
+					btn: ['知道了', '返回']
+				});
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>LJPBlog博客 - 用户注册</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="alternate icon" type="image/png" href="{_path}/static/assets/i/favicon.png">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css" />
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css" />
+		<style>
+			.header {
+				text-align: center;
+			}
+			.header h1 {
+			  font-size: 200%;
+			  color: #333;
+			  margin-top: 30px;
+			}
+			.header p {
+			  font-size: 14px;
+			}
+	  </style>
+	</head>
+	<body>
+		<div class="header">
+			<!-- 注册界面开始 -->
+			<div class="am-g">
+				<h1>欢迎来到我的博客</h1>
+				<p>声明：UI框架非本人设计，除此之外皆为本人所制作</p>
+			</div>
+			<!-- 注册界面结束 -->
+			<hr />
+		</div>
+		<div class="am-g">
+			<div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+				<h3>注册</h3>
+				<hr>
+
+				<!-- 注册表单开始 -->
+				<form method="post" onsubmit="return regist();" action="${_path}/user/index" class="am-form">
+					<label for="userName">账号:</label>
+					<input type="text" name="userName" id="userName">
+					<br>
+					<label for="password">密码:</label>
+					<input type="password" name="userPassword" id="userPassword">
+					<br>
+					<label for="define-password">确认密码:</label>
+					<input type="password" name="definePassword" id="definePassword">
+					<br>
+					<div class="am-cf">
+						<input type="submit" name="" value="注册" class="am-btn am-btn-primary am-btn-sm am-fl">
+						<a href="${_path}/user/login"><input type="button" value="我已注册 (￣▽￣)／? " class="am-btn am-btn-default am-btn-sm am-fr"></a>
+					</div>
+				</form>
+				<!-- 注册表单结束 -->
+				<hr>
+			</div>
+		</div>
+	</body>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script>
+		var state = 0;
+		/* 鼠标移开用户名的事件	验证用户名的输入 */
+		$('#userName').mouseleave(function() {
+			var name = $('#userName').val();
+
+
+			if (name == null || name.length == 0 || name == "") {
+				state = 0;
+				layermsg("用户名不能为空");
+			} else {
+				$.get('${_path}/user/regist', {
+					userName: name
+				}, function(data) {
+					if (data == "1") {
+						state = 1;
+					} else {
+						layermsg("该用户已存在");
+					}
+				})
+			}
+
+		});
+
+		/*	用户注册函数 */
+		function regist() {
+			var userName = $('#userName').val();
+			var userPassword = $('#userPassword').val();
+			var definePassword = $('#definePassword').val();
+
+			if (userName == null || userName == "" || userName.length == 0) {
+				layermsg("用户名不能为空");
+				return false;
+			}
+
+			if (userPassword == null || userPassword == "" || userPassword.length == 0) {
+				layermsg("用户名不能为空");
+				return false;
+			}
+			if (definePassword != userPassword) {
+				layermsg("两次输入的密码不正确");
+				return false;
+			}
+
+			if (state == 0) {
+				layermsg("注册失败，用户名已存在");
+				return false;
+			} else {
+				$.ajax({
+					url: "${_path}/user/insert",
+					type: "post",
+					data: JSON.stringify({
+						userName: userName,
+						userPassword: userPassword
+					}),
+					contentType: "application/json",
+					success: function(data) {
+						self.location.href = "${_path}/user/index";
+					}
+				})
+				return false;
+			}
+
+		}
+
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg, {
+					time: 5000,
+					btn: ['知道了', '返回']
+				});
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,42 @@
+<div class="layui-side layui-bg-black">
+	<div class="layui-side-scroll">
+		<ul class="layui-nav layui-nav-tree" lay-filter="test">
+			<li class="layui-nav-item layui-nav-itemed">
+				<a href="javascript:;">用户管理</a>
+				<dl class="layui-nav-child">
+					<dd>
+						<a id="left_manager" href="${_path}/admin/manager/manage">管理员</a>
+					</dd>
+					<dd>
+						<a id="left_user" href="${_path}/admin/user/manage">用户</a>
+					</dd>
+				</dl>
+			</li>
+			<li class="layui-nav-item layui-nav-itemed">
+				<a href="javascript:;">文章管理</a>
+				<dl class="layui-nav-child">
+					<dd>
+						<a class="active" id="left_articles" href="${_path}/admin/articles/manage">文章</a>
+					</dd>
+					<dd>
+						<a id="left_comment" href="${_path}/admin/comment/manage">评论</a>
+					</dd>
+					<dd>
+						<a id="left_label" href="${_path}/admin/label/manage">标签</a>
+					</dd>
+					<dd>
+						<a id="left_articles_label" href="${_path}/admin/articlesLabel/manage">文章标签表</a>
+					</dd>
+				</dl>
+			</li>
+			<li class="layui-nav-item layui-nav-itemed">
+				<a href="javascript:;">其他</a>
+				<dl class="layui-nav-child">
+					<dd>
+						<a href="javascript:;">其他</a>
+					</dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+</div>

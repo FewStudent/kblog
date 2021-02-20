@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+		<title>管理员添加</title>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form id="form" style="width: 100%;">
+					<div class="form-group">
+						<label for="account">账号</label>
+						<input type="text" class="form-control" id="account" name="account" placeholder="请输入账号" />
+					</div>
+
+					<div class="form-group">
+						<label for="password">密码</label>
+						<input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" />
+					</div>
+
+					<div class="form-group">
+						<label for="tpwd">确认密码</label>
+						<input type="password" class="form-control" id="tpwd" name="tpwd" placeholder="请确认密码" />
+					</div>
+
+					<div class="form-group">
+						<label for="nickname">昵称</label>
+						<input type="text" class="form-control" id="nickname" name="nickname" placeholder="请输入昵称" />
+					</div>
+				</form>
+				<button type="button" class="btn btn-primary btn-block" id="insert_btn">添加</button>
+			</div>
+		</div>
+	</body>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="${_path}/static/bootstrap/js/popper.min.js"></script>
+	<script>
+		layui.use('layer', function() {
+			var layer = layui.layer;
+
+			$('#insert_btn').click(function() {
+				var acc = $('#account').val();
+				var name = $('#nickname').val();
+				var pwd = $('#password').val();
+				var tpwd = $('#tpwd').val();
+
+				if (isNull(acc) || isNull(name)) {
+					layer.msg("还有信息未填上!");
+					return false;
+				}
+
+				if (pwd != tpwd) {
+					layer.msg("密码不相同");
+					return false;
+				}
+				
+				$.ajax({
+					url: '${_path}/admin/manager/insert',
+					type: 'post',
+					data: JSON.stringify($('#form')
+						.serializeObject()),
+					contentType: "application/json",
+					success: function(data) {
+						if (data.status) {
+							var index = parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+							parent.layer.close(index);
+							parent.layer.msg("添加成功");
+							parent.$(".layui-laypage-btn").click();
+						} else {
+							layer.msg(data.msg);
+						}
+					}
+				})
+			})
+
+			/* form表单内容转换为json对象的方法 */
+			$.fn.serializeObject = function() {
+				var o = {};
+				var a = this.serializeArray();
+				$.each(a, function() {
+					if (o[this.name]) {
+						if (!o[this.name].push) {
+							o[this.name] = [o[this.name]];
+						}
+						o[this.name].push(this.value || '');
+					} else {
+						o[this.name] = this.value || '';
+					}
+				});
+				return o;
+			};
+
+			/** 判断是否为空的函数 */
+			function isNull(obj) {
+				if (obj == "" || obj == null) {
+					return true;
+				}
+				return false;
+			}
+		})
+	</script>
+</html>

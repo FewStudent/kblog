@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogUserMapper">
+	<!-- 一般的用户信息映射 -->
+	<resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogUser">
+		<!-- WARNING - @mbg.generated -->
+		<id column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+		<result column="user_another_name" jdbcType="VARCHAR" property="userAnotherName" />
+		<result column="user_head_sculpture" jdbcType="VARCHAR"
+			property="userHeadSculpture" />
+		<result column="user_level" jdbcType="INTEGER" property="userLevel" />
+		<result column="user_experience" jdbcType="INTEGER" property="userExperience" />
+		<result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+		<result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+		<result column="user_abstract" jdbcType="VARCHAR" property="userAbstract" />
+		<result column="user_creat_date" jdbcType="VARCHAR" property="userCreatDate" />
+		<result column="user_state" jdbcType="INTEGER" property="userState" />
+		<result column="user_power" jdbcType="INTEGER" property="userPower" />
+	</resultMap>
+
+	<!-- 用户携带评论的映射 -->
+	<resultMap type="club.laky.blogger.pojo.BlogUser" id="ucResultMap"
+		extends="BaseResultMap">
+		<collection property="comments" ofType="club.laky.blogger.pojo.BlogComment">
+			<id column="comment_id" jdbcType="VARCHAR" property="commentId" />
+			<result column="comment_observer_id" jdbcType="VARCHAR"
+				property="commentObserverId" />
+			<result column="comment_time" jdbcType="VARCHAR" property="commentTime" />
+			<result column="comment_blog_id" jdbcType="VARCHAR" property="commentBlogId" />
+			<result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+			<result column="comment_state" jdbcType="INTEGER" property="commentState" />
+			<result column="articles_title" property="articlesTitle" />
+		</collection>
+	</resultMap>
+
+	<!-- 用户携带的文章的映射 -->
+	<resultMap type="club.laky.blogger.pojo.BlogUser" id="uaResultMap"
+		extends="BaseResultMap">
+		<collection property="articles" ofType="club.laky.blogger.pojo.BlogArticles">
+			<id column="articles_id" jdbcType="VARCHAR" property="articlesId" />
+			<result column="articles_title" jdbcType="VARCHAR" property="articlesTitle" />
+			<result column="articles_type" jdbcType="VARCHAR" property="articlesType" />
+			<result column="articles_state" jdbcType="INTEGER" property="articlesState" />
+			<result column="articles_author_id" jdbcType="VARCHAR"
+				property="articlesAuthorId" />
+			<result column="articles_commentable" jdbcType="INTEGER"
+				property="articlesCommentable" />
+			<result column="articles_isstick" jdbcType="INTEGER" property="articlesIsstick" />
+			<result column="articles_praise_count" jdbcType="INTEGER"
+				property="articlesPraiseCount" />
+			<result column="articles_comment_count" jdbcType="INTEGER"
+				property="articlesCommentCount" />
+			<result column="articles_view_count" jdbcType="INTEGER"
+				property="articlesViewCount" />
+			<result column="articles_img_url" jdbcType="VARCHAR" property="articlesImgUrl" />
+			<result column="articles_create_date" jdbcType="VARCHAR"
+				property="articlesCreateDate" />
+			<result column="articles_content" jdbcType="LONGVARCHAR"
+				property="articlesContent" />
+			<result property="authorName" column="author_name" />
+		</collection>
+	</resultMap>
+
+	<select id="queryCommentsByUserId" resultMap="ucResultMap">
+		select a.articles_title articles_title,u.*,c.* from blog_user u left
+		join blog_comment c on u.user_id = c.comment_observer_id and
+		c.comment_state = 1 left join blog_articles a on a.articles_id =
+		c.comment_blog_id where u.user_id = #{userId}
+		<if test="first != null and limit != null">
+			LIMIT #{first},#{limit}
+		</if>
+	</select>
+
+	<select id="queryArticlesByUserId" resultMap="uaResultMap">
+		select u.user_id,a.articles_id,a.articles_title,a.articles_author_id,
+		a.articles_create_date from blog_articles a,blog_user u where
+		a.articles_author_id =
+		u.user_id and u.user_id = #{userId}
+		<if test="first != null and limit != null">
+			LIMIT #{first},#{limit}
+		</if>
+	</select>
+</mapper>

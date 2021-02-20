@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>LJPBlog博客 - 文章管理</title>
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css">
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<!--头部-->
+			<!--:include("../parts/admin_header.html"){}-->
+
+			<!--左侧导航栏-->
+			<!--:include("../parts/admin_left.html"){}-->
+
+			<div class="layui-body">
+				<!--此处为内容部分-->
+				<div style="padding: 15px;">
+
+					<blockquote class="layui-elem-quote  layui-quote-nm layui-form">
+						<!--表头操作-->
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" id="keyText" placeholder="请输入文章相关内容" class="layui-input search_input">
+							</div>
+						</div>
+
+						<div class="layui-input-inline">
+							<select id="type">
+								<option value="">类型</option>
+								<option value="其他">其他</option>
+								<option value="生活">生活</option>
+								<option value="技术">技术</option>
+							</select>
+						</div>
+
+						<div class="layui-input-inline">
+							<select id="state">
+								<option value="">状态</option>
+								<option value="0">审核</option>
+								<option value="1">正常</option>
+								<option value="2">屏蔽</option>
+							</select>
+						</div>
+
+						<div class="layui-inline">
+							<a class="layui-btn search_btn">查询</a>
+						</div>
+					</blockquote>
+
+					<!-- 表格开始 -->
+					<div class="layui-tab" lay-filter="articles" lay-allowclose="true">
+						<table id="articles" lay-filter="articles"></table>
+					</div>
+					<!-- 表格结束 -->
+
+					<!-- 操作 -->
+					<script type="text/html" id="user_bar">
+						<a class="layui-btn layui-btn-xs" lay-event="allow">通过</a>
+						<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="details">详情</a>
+						<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="shield">屏蔽</a>
+						<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+					</script>
+				</div>
+			</div>
+
+
+
+			<!--底部footer-->
+			<!--:include("../parts/admin_footer.html"){}-->
+
+		</div>
+
+	</body>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script>
+		$('#left_articles').css('background', '#009688');
+		$('#left_articles').css('color', '#fff');
+		layui.use(['table', 'form', 'element', 'layer'], function() {
+			var table = layui.table;
+			var layer = layui.layer;
+			var element = layui.element;
+			var manager = JSON.parse(sessionStorage.getItem('admin'));
+
+			/* 载入表格 */
+			table.render({
+				elem: '#articles',
+				url: '${_path}/admin/articles/page' //数据接口
+					,
+				width: 1120,
+				height: 450,
+				page: true //开启分页
+					,
+				cols: [
+					[ //表头
+						{
+							field: 'articlesId',
+							title: 'ID',
+							width: 160,
+							sort: true,
+							fixed: 'left'
+						}, {
+							field: 'articlesTitle',
+							title: '文章标题',
+							width: 160
+						}, {
+							field: 'articlesType',
+							title: '文章类型',
+							width: 160,
+							sort: true
+						},  {
+							field: 'authorName',
+							title: '作者名',
+							width: 160
+						}, {
+							field: 'articlesPraiseCount',
+							title: '点赞数量',
+							width: 100,
+							sort: true
+						}, {
+							field: 'articlesViewCount',
+							title: '点击数量',
+							width: 100,
+							sort: true
+						}, {
+							field: 'articlesCommentCount',
+							title: '评论数量',
+							width: 100,
+							sort: true
+						}, {
+							field: 'articlesCommentable',
+							title: '评论',
+							width: 80,
+							templet: '<div>{{commentableName(d.articlesCommentable)}}</div>',
+							fixed: 'right'
+						}, {
+							field: 'articlesIsstick',
+							title: '置顶情况',
+							width: 100,
+							sort: true,
+							templet: '<div>{{isstickName(d.articlesIsstick)}}</div>',
+							fixed: 'right'
+						}, {
+							field: 'articlesState',
+							title: '状态',
+							width: 80,
+							sort: true,
+							templet: '<div>{{stateName(d.articlesState)}}</div>',
+							fixed: 'right'
+						}, {
+							field: '',
+							title: '操作',
+							align: 'center',
+							width: 210,
+							toolbar: '#user_bar',
+							fixed: 'right'
+						}
+					]
+				],
+				id: 'Reload',
+			});
+
+			/* 重载表格 */
+			$('.search_btn').on('click', function() {
+				table.reload('Reload', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					},
+					where: {
+						state: $('#state').val(),
+						content: $('#keyText').val(),
+						type: $('#type').val()
+					}
+				});
+			});
+
+			/* 表格操作出发事件 */
+			table.on('tool(articles)', function(obj) {
+				var data = obj.data,
+					layEvent = obj.event;
+				/*	屏蔽事件	*/
+				if (layEvent === "shield") {
+					if (data.articlesState == '2') {
+						layermsg("该文章已经被屏蔽了,不需要再屏蔽!");
+						return;
+					}
+					layer.confirm("是否屏蔽该文章", {
+						title: '屏蔽确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/articles/down?id=' + data.articlesId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("屏蔽成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("已取消解冻操作");
+					});
+					/*	解除屏蔽事件	*/
+				} else if (layEvent === "allow") {
+					if (data.articlesState == 1) {
+						layermsg("文章为正常,不需要通过!");
+						return;
+					}
+					layer.confirm("是否让该文章可见", {
+						title: '文章授权确认',
+						icon: 0,
+						btn: ['确定', '返回']
+					}, function() {
+						$.ajax({
+							type: "post",
+							url: '${_path}/admin/articles/allow?id=' + data.articlesId,
+							async: true,
+							success: function(data) {
+								if (data == 1) {
+									layer.msg("通过成功");
+								}
+								$(".layui-laypage-btn").click();
+							}
+						});
+					}, function() {
+						layer.msg("取消通过操作");
+					});
+				} else if (layEvent == "delete") {
+					if (manager.power != 1)  {
+						layermsg("你无权删除数据");
+					} else {
+						layer.confirm("是否删除该文章", {
+								title: '文章删除确认',
+								icon: 0,
+								btn: ['确定', '返回']
+							},
+							function() {
+								$.ajax({
+									type: "post",
+									url: '${_path}/admin/articles/delete?id=' + data.articlesId,
+									async: true,
+									success: function(data) {
+										if (data.status == 1) {
+											layer.msg("删除成功");
+										} else {
+											layer.msg(data.msg);
+										}
+										$(".layui-laypage-btn").click();
+									}
+								})
+							},
+							function() {
+								layermsg("已经取消了删除");
+							})
+					}
+
+				}
+			});
+
+		});
+
+		/* 格式化文章状态的函数 */
+		function stateName(state) {
+			switch (state) {
+				case 0:
+					return "审核中";
+				case 1:
+					return "正常";
+				case 2:
+					return "屏蔽";
+				default:
+					return "";
+			}
+		}
+
+		/*	格式化文章置顶情况的函数	*/
+		function isstickName(msg) {
+			switch (msg) {
+				case 0:
+					return "不置顶";
+				case 1:
+					return "首页置顶";
+				case 2:
+					return "分类置顶";
+				default:
+					return "";
+			}
+		}
+
+		/*	格式化文章评论情况的函数	*/
+		function commentableName(msg) {
+			switch (msg) {
+				case 0:
+					return "不能评论";
+				case 1:
+					return "能评论";
+				default:
+					return "";
+			}
+		}
+
+		/*	layer的msg提示框函数 */
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg, {
+					time: 5000,
+					btn: ['知道了', '返回']
+				});
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogPraiseMapper">
+  <resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogPraise">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="praise_id" jdbcType="INTEGER" property="praiseId" />
+    <result column="praise_articles_id" jdbcType="INTEGER" property="praiseArticlesId" />
+    <result column="praise_user_id" jdbcType="INTEGER" property="praiseUserId" />
+    <result column="praise_flag" jdbcType="INTEGER" property="praiseFlag" />
+    <result column="praise_date" jdbcType="VARCHAR" property="praiseDate" />
+  </resultMap>
+</mapper>

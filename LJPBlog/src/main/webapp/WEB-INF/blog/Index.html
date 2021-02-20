@@ -1,0 +1,351 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>LJPBlog博客 - 首页</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="icon" type="image/png" href="${_path}/static/assets/i/favicon.png">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<link rel="apple-touch-icon-precomposed" href="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="msapplication-TileImage" content="${_path}/static/assets/i/app-icon72x72@2x.png">
+		<meta name="msapplication-TileColor" content="#0e90d2">
+		<link rel="stylesheet" href="${_path}/static/assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="${_path}/static/assets/css/app.css">
+		<link rel="stylesheet" href="${_path}/static/layui-v2.4.5/layui/css/layui.css" />
+		<link rel="stylesheet" href="${_path}/static/bootstrap/css/bootstrap.min.css" />
+		<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+		<style>
+			a {
+				cursor: pointer;
+			}
+
+			.active-a {
+				background: #4890d3;
+				color: white;
+			}
+		</style>
+	</head>
+
+	<body id="blog">
+
+
+		<!--: include("../header.html"){}  -->
+
+		<!-- banner start -->
+		<div class="am-g am-g-fixed blog-fixed am-u-sm-centered blog-article-margin">
+			<div data-am-widget="slider" class="am-slider am-slider-b1" data-am-slider='{&quot;controlNav&quot;:false}'>
+				<ul class="am-slides">
+					<li>
+						<img src="${_path}/static/assets/i/b1.jpg">
+						<div class="blog-slider-desc am-slider-desc ">
+							<div class="blog-text-center blog-slider-con">
+								<span><a href="" class="blog-color">Article &nbsp;</a></span>
+								<h1 class="blog-h-margin"><a href="">总在思考一句积极的话</a></h1>
+								<p>那时候刚好下着雨，柏油路面湿冷冷的，还闪烁着青、黄、红颜色的灯火。
+								</p>
+								<span class="blog-bor">2015/10/9</span>
+								<br><br><br><br><br><br><br>
+							</div>
+						</div>
+					</li>
+					<li>
+						<img src="${_path}/static/assets/i/b2.jpg">
+						<div class="am-slider-desc blog-slider-desc">
+							<div class="blog-text-center blog-slider-con">
+								<span><a href="" class="blog-color">Article &nbsp;</a></span>
+								<h1 class="blog-h-margin"><a href="">总在思考一句积极的话</a></h1>
+								<p>那时候刚好下着雨，柏油路面湿冷冷的，还闪烁着青、黄、红颜色的灯火。
+								</p>
+								<span>2015/10/9</span>
+							</div>
+						</div>
+					</li>
+					<li>
+						<img src="${_path}/static/assets/i/b3.jpg">
+						<div class="am-slider-desc blog-slider-desc">
+							<div class="blog-text-center blog-slider-con">
+								<span><a href="" class="blog-color">Article &nbsp;</a></span>
+								<h1 class="blog-h-margin"><a href="">总在思考一句积极的话</a></h1>
+								<p>那时候刚好下着雨，柏油路面湿冷冷的，还闪烁着青、黄、红颜色的灯火。
+								</p>
+								<span>2015/10/9</span>
+							</div>
+						</div>
+					</li>
+					<li>
+						<img src="${_path}/static/assets/i/b2.jpg">
+						<div class="am-slider-desc blog-slider-desc">
+							<div class="blog-text-center blog-slider-con">
+								<span><a href="" class="blog-color">Article &nbsp;</a></span>
+								<h1 class="blog-h-margin"><a href="">总在思考一句积极的话</a></h1>
+								<p>那时候刚好下着雨，柏油路面湿冷冷的，还闪烁着青、黄、红颜色的灯火。
+								</p>
+								<span>2015/10/9</span>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- banner end -->
+
+		<!-- content srart -->
+		<div class="am-g am-g-fixed blog-fixed" id="blogs">
+			<div class="am-u-md-8 am-u-sm-12">
+
+				<div class="mt-3">
+					<div class="input-group mb-3">
+						<input id="keyText" type="text" class="form-control" placeholder="请输入关键字" />
+						<select class="form-control" id="type">
+							<option value="">类型</option>
+							<option value="技术">技术</option>
+							<option value="生活">生活</option>
+							<option value="其他">其他</option>
+						</select>
+						<select class="form-control" id="orderType">
+							<option value="">排序方式</option>
+							<option value="1">点击量</option>
+							<option value="2">点赞量</option>
+							<option value="3">评论数</option>
+						</select>
+						<button type="button" class="btn btn-group-lg" @click="search()">查询</button>
+					</div>
+				</div>
+
+				<article class="am-g blog-entry-article" v-for="article in articles">
+					<div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
+						<img v-if="article.articlesImgUrl == null || article.articlesImgUrl == ''" src="${_path}/static/assets/i/f10.jpg"
+						 alt="" class="am-u-sm-12">
+						<img v-else :src="article.articlesImgUrl" alt="" class="am-u-sm-12" style="width: 400px;height: 204px;">
+					</div>
+					<div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
+						<h1><a class="blog-color" :href="'${_path}/articles/toContent?id=' + article.articlesId + '&type=1'">{{article.articlesTitle}}</a></h1>
+						<span> @{{article.authorName}} &nbsp;</span>
+						<span>{{article.articlesCreateDate}}</span>
+						<br><br>
+						<span>点击量&nbsp;:&nbsp;{{article.articlesViewCount}}&nbsp;</span>
+						<span>评论量&nbsp;:&nbsp;{{article.articlesCommentCount}}&nbsp;</span>
+						<span>点赞量&nbsp;:&nbsp;{{article.articlesPraiseCount}}&nbsp;</span>
+						<div style="margin: 20px 0px 0px 0px;">
+							<div class="btn-group">
+								<a v-for="label in article.blogLabels" class="btn btn-light" style="margin: 0px 10px 0px 0px;">{{label.labelName}}</a>
+							</div>
+						</div>
+					</div>
+					
+				</article>
+
+				<ul class="am-pagination blog-pagination">
+					<li class="am-pagination-prev am-disabled"><a @click="changePage(nowPage - 1)">&laquo; 上一页</a></li>
+
+					<li v-for="item in pages" class="am-pagination-item">
+						<a v-if="item == nowPage" href="javascript:;" @click="changePage(item)" style="background: #4890d3;color: white;">{{item}}</a>
+						<a v-else href="javascript:;" @click="changePage(item)">{{item}}</a>
+					</li>
+
+					<li class="am-pagination-next "><a @click="changePage(nowPage + 1)">下一页 &raquo;</a></li>
+				</ul>
+			</div>
+			<!--<button id="button" class="kuaidianwo">快快点我</button>-->
+			<!--:include("../righter.html"){}  -->
+		</div>
+		<!-- content end -->
+
+		<!--:include("../footer.html"){}  -->
+
+
+	</body>
+	<script src="${_path}/static/JQuery/jquery.min.js"></script>
+	<script src="${_path}/static/assets/js/amazeui.min.js"></script>
+	<script src="${_path}/static/vue/vue.js"></script>
+	<script src="${_path}/static/mine/pagehelper.js"></script>
+	<script src="${_path}/static/bootstrap/js/popper.min.js"></script>
+	<script src="${_path}/static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="${_path}/static/layui-v2.4.5/layui/layui.all.js"></script>
+	<script>
+		var helper;
+		var vue = new Vue({
+			el: '#blogs',
+			data: {
+				articles: [],
+				pages: 0,
+				nowPage: 1,
+			},
+			created: function() {
+				var that = this;
+				var labelName = '${labelName}';
+				var url = '';
+				if (labelName == null || labelName == '') {
+					url = '${_path}/articles/all';
+				} else {
+					url = '${_path}/articles/byLabel?labelName=' + labelName;
+				}
+				$.ajax({
+					'url': url,
+					'type': 'get',
+					'success': function(data) {
+						if (data.status) {
+							var articles = data.data;
+							helper = createPageHelper(5, articles);
+							var items = helper.getDataByPage(1);
+							that.$data.articles = items;
+							that.$data.pages = helper.getTotalPage();
+							that.$data.nowPage = helper.page;
+						} else {
+							layermsg("没有找到结果");
+						}
+					},
+					'error': function(data) {
+						layermsg("请求失败了");
+					}
+				})
+			},
+			watch: {
+				nowPage: function() {
+					this.articles = helper.getDataByPage(this.nowPage);
+					var first = '.am-pagination-prev';
+					var last = '.am-pagination-next';
+					if (this.nowPage > this.pages) {
+						this.nowPage = this.pages;
+					}
+					if (this.nowPage < 0) {
+						this.nowPage = 1;
+					}
+
+					$(first).removeClass('am-disabled');
+					$(last).removeClass('am-disabled');
+
+					if (this.nowPage == 1) {
+						$(first).addClass('am-disabled');
+					}
+					if (this.nowPage == this.pages) {
+						$(last).addClass('am-disabled');
+					}
+
+					var index = this.nowPage - 1;
+					var ele = '.blog-pagination .am-pagination-item:eq(' + index + ')';
+					$(ele).siblings().removeClass('am-active');
+					$(ele).addClass('am-active');
+					$('html,body').animate({
+						scrollTop: $('#blogs').offset().top - 70
+					}, 500);
+				}
+			},
+			methods: {
+				changePage: function(data) {
+					this.nowPage = data;
+				},
+				myself: function(id) {
+					var that = this;
+					$.ajax({
+						'url': '${_path}/user/myArticles',
+						'type': 'get',
+						success: function(data) {
+							if (data.status) {
+								var searchArticles = data.data;
+								helper = createPageHelper(5, searchArticles);
+								that.$data.articles = helper.getDataByPage(1);
+								that.$data.pages = helper.getTotalPage();
+								that.$data.nowPage = 1;
+							} else {
+								layermsg(data.msg);
+							}
+						}
+					})
+				},
+				search: function() {
+					var keyText = $('#keyText').val();
+					var type = $('#type').val();
+					var orderType = $('#orderType').val();
+					var url = '${_path}/articles/search?content=' + keyText + '&type=' + type + '&orderType=' + orderType;
+
+					var that = this;
+					$.ajax({
+						'url': url,
+						'type': 'get',
+						success: function(data) {
+							if (data.status) {
+								var searchArticles = data.data;
+								helper = createPageHelper(5, searchArticles);
+								that.$data.articles = helper.getDataByPage(1);
+								that.$data.pages = helper.getTotalPage();
+								that.$data.nowPage = 1;
+							} else {
+								layermsg("没有找到你要的文章");
+							}
+						}
+					})
+				}
+			}
+		})
+
+		$('.blog-tag').click(function() {
+			var labelName = $(this).html();
+			$.ajax({
+				'url': '${_path}/articles/byLabel?labelName=' + labelName,
+				'type': 'get',
+				'success': function(data) {
+					if (data.status) {
+						var searchArticles = data.data;
+						helper = createPageHelper(5, searchArticles);
+						vue.$data.articles = helper.getDataByPage(1);
+						vue.$data.pages = helper.getTotalPage();
+						vue.$data.nowPage = 1;
+						$('html,body').animate({
+							scrollTop: $('#blogs').offset().top - 70
+						}, 500);
+					} else {
+						layermsg("没有找到你要的文章");
+					}
+				},
+				'error': function() {
+					layermsg("请求失败");
+				}
+			})
+			return false;
+		})
+
+		$(document).ready(function() {
+			if (sessionStorage.labels == null) {
+				$.ajax({
+					'url': '${_path}/label/selectHot',
+					'type': 'get',
+					'success': function(data) {
+						sessionStorage.labels = JSON.stringify(data.data);
+						var labels = JSON.parse(sessionStorage.labels);
+						for (var i = 0; i < labels.length; i++) {
+							var ele = '.blog-tag:eq(' + i + ')';
+							$(ele).html(labels[i].labelName);
+							$(ele).attr('href', "#");
+						}
+					},
+					'error': function() {
+
+					}
+				})
+			} else {
+				var labels = JSON.parse(sessionStorage.labels);
+				for (var i = 0; i < labels.length; i++) {
+					var ele = '.blog-tag:eq(' + i + ')';
+					$(ele).html(labels[i].labelName);
+				}
+			}
+		})
+
+		function layermsg(msg) {
+			layui.use('layer', function() {
+				var layer = layui.layer;
+				layer.msg(msg);
+			})
+		}
+	</script>
+</html>

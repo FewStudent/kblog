@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogLabelMapper">
+  <resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogLabel">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="label_id" jdbcType="INTEGER" property="labelId" />
+    <result column="label_name" jdbcType="VARCHAR" property="labelName" />
+    <result column="label_pick_count" jdbcType="INTEGER" property="labelPickCount" />
+    <result column="label_state" jdbcType="INTEGER" property="labelState" />
+  </resultMap>
+  
+  <update id="updateQuickCount" parameterType="String">
+  	update blog_label set label_pick_count = label_pick_count + 1 where label_name = #{labelName}
+  </update>
+</mapper>

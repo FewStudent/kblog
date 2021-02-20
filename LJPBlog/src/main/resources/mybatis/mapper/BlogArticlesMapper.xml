@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.laky.blogger.mapper.BlogArticlesMapper">
+	<!-- 基础的文字映射 -->
+	<resultMap id="BaseResultMap" type="club.laky.blogger.pojo.BlogArticles">
+		<!-- WARNING - @mbg.generated -->
+		<id column="articles_id" jdbcType="INTEGER" property="articlesId" />
+		<result column="articles_title" jdbcType="VARCHAR" property="articlesTitle" />
+		<result column="articles_type" jdbcType="VARCHAR" property="articlesType" />
+		<result column="articles_state" jdbcType="INTEGER" property="articlesState" />
+		<result column="articles_author_id" jdbcType="INTEGER"
+			property="articlesAuthorId" />
+		<result column="articles_commentable" jdbcType="INTEGER"
+			property="articlesCommentable" />
+		<result column="articles_isstick" jdbcType="INTEGER" property="articlesIsstick" />
+		<result column="articles_praise_count" jdbcType="INTEGER"
+			property="articlesPraiseCount" />
+		<result column="articles_comment_count" jdbcType="INTEGER"
+			property="articlesCommentCount" />
+		<result column="articles_view_count" jdbcType="INTEGER"
+			property="articlesViewCount" />
+		<result column="articles_img_url" jdbcType="VARCHAR" property="articlesImgUrl" />
+		<result column="articles_create_date" jdbcType="VARCHAR"
+			property="articlesCreateDate" />
+		<result column="articles_content" jdbcType="LONGVARCHAR"
+			property="articlesContent" />
+		<result column="author_name" property="authorName" />
+	</resultMap>
+
+	<resultMap type="club.laky.blogger.pojo.BlogArticles" id="AURestultMap"
+		extends="BaseResultMap">
+		<association property="blogUser" javaType="club.laky.blogger.pojo.BlogUser">
+			<id column="user_id" jdbcType="INTEGER" property="userId" />
+			<result column="user_name" jdbcType="VARCHAR" property="userName" />
+			<result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+			<result column="user_another_name" jdbcType="VARCHAR"
+				property="userAnotherName" />
+			<result column="user_head_sculpture" jdbcType="VARCHAR"
+				property="userHeadSculpture" />
+			<result column="user_level" jdbcType="INTEGER" property="userLevel" />
+			<result column="user_experience" jdbcType="INTEGER" property="userExperience" />
+			<result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+			<result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+			<result column="user_abstract" jdbcType="VARCHAR" property="userAbstract" />
+			<result column="user_creat_date" jdbcType="VARCHAR" property="userCreatDate" />
+			<result column="user_state" jdbcType="INTEGER" property="userState" />
+			<result column="user_power" jdbcType="INTEGER" property="userPower" />
+		</association>
+	</resultMap>
+
+	<!-- 包含文章标签的文章信息 -->
+	<resultMap type="club.laky.blogger.pojo.BlogArticles" id="AULResultMap"
+		extends="AURestultMap">
+		<collection property="blogLabels" ofType="club.laky.blogger.pojo.BlogLabel">
+			<id column="label_id" jdbcType="INTEGER" property="labelId" />
+			<result column="label_name" jdbcType="VARCHAR" property="labelName" />
+			<result column="label_pick_count" jdbcType="INTEGER" property="labelPickCount" />
+			<result column="label_state" jdbcType="INTEGER" property="labelState" />
+		</collection>
+	</resultMap>
+
+	<!-- 包含了文章的所有信息的映射，包括作者信息、评论信息、标签信息 -->
+	<resultMap type="club.laky.blogger.pojo.BlogArticles" id="AllInfoResultMap"
+		extends="AULResultMap">
+		<collection property="blogComments" ofType="club.laky.blogger.pojo.BlogComment">
+			<id column="comment_id" jdbcType="INTEGER" property="commentId" />
+			<result column="comment_observer_id" jdbcType="INTEGER"
+				property="commentObserverId" />
+			<result column="comment_time" jdbcType="VARCHAR" property="commentTime" />
+			<result column="comment_blog_id" jdbcType="INTEGER" property="commentBlogId" />
+			<result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+			<result column="comment_state" jdbcType="INTEGER" property="commentState" />
+			<association property="commenter" javaType="club.laky.blogger.pojo.BlogUser">
+				<id column="observer_id" jdbcType="INTEGER" property="userId" />
+				<result column="observer_another_name" jdbcType="VARCHAR"
+					property="userAnotherName" />
+				<result column="observer_head_sculpture" jdbcType="VARCHAR"
+					property="userHeadSculpture" />
+			</association>
+		</collection>
+
+	</resultMap>
+
+	<!-- 查询携带评论的文章信息 -->
+	<select id="queryArticlesAndCommentsById" resultMap="AllInfoResultMap"
+		parameterType="int">
+		select * from blog_articles a left JOIN blog_comment c
+		on c.comment_blog_id = a.articles_id where a.articles_id =
+		#{id}
+	</select>
+
+	<!-- 查询携带用户信息的文章信息 -->
+	<select id="queryArticlesAndUserById" resultMap="AURestultMap"
+		parameterType="int">
+		select a.*,u.user_another_name,u.user_email from
+		blog_articles
+		a,blog_user u where
+		a.articles_author_id = u.user_id and
+		a.articles_id
+		= #{id}
+	</select>
+
+	<!-- 查询携带用户信息的所有文章信息 -->
+	<select id="queryAll" resultMap="AULResultMap">
+		select u.user_another_name author_name,l.label_name,a.* from blog_user
+		u,blog_articles a LEFT JOIN blog_articles_label bal on bal.articles_id
+		= a.articles_id LEFT JOIN blog_label l on l.label_id = bal.label_id
+		where a.articles_author_id = u.user_id
+
+		<if test="artType != '' and artType != null">
+			and a.articles_type = #{artType}
+		</if>
+
+		<if test="content != null and content != ''">
+			and (a.articles_title like '%${content}%' or
+			a.articles_content like
+			'%${content}%' )
+		</if>
+
+		<if test="state != null">
+			and articles_state = #{state}
+		</if>
+		<if test="type == 1">
+			order by a.articles_view_count DESC
+		</if>
+		<if test="type == 2">
+			order by a.articles_praise_count DESC
+		</if>
+		<if test="type == 3">
+			order by a.articles_comment_count DESC
+		</if>
+		<if test="first != null and limit != null">
+			limit #{first},#{limit}
+		</if>
+	</select>
+
+	<select id="queryAllNotLable" resultMap="AURestultMap">
+		select u.user_another_name author_name,a.* from blog_user
+		u,blog_articles a where a.articles_author_id = u.user_id
+
+		<if test="artType != '' and artType != null">
+			and a.articles_type = #{artType}
+		</if>
+
+		<if test="content != null and content != ''">
+			and (a.articles_title like '%${content}%' or
+			a.articles_content like
+			'%${content}%' )
+		</if>
+
+		<if test="state != null">
+			and articles_state = #{state}
+		</if>
+		<if test="type == 1">
+			order by a.articles_view_count DESC
+		</if>
+		<if test="type == 2">
+			order by a.articles_praise_count DESC
+		</if>
+		<if test="type == 3">
+			order by a.articles_comment_count DESC
+		</if>
+		<if test="first != null and limit != null">
+			limit #{first},#{limit}
+		</if>
+	</select>
+
+	<!-- 查询携带用户信息的所有文章信息 -->
+	<select id="queryCountAll" resultType="int">
+		select count(*) from blog_articles a,blog_user u where
+		a.articles_author_id = u.user_id
+		<if test="artType != '' and artType != null">
+			and a.articles_type = #{artType}
+		</if>
+
+		<if test="content != null and content != ''">
+			and (a.articles_title like '%${content}%' or
+			a.articles_content like
+			'%${content}%' )
+		</if>
+
+		<if test="state != null">
+			and articles_state = #{state}
+		</if>
+	</select>
+
+	<!-- 查询携带文章所有相关信息的信息 -->
+	<select id="queryAllInfoByArticlesId" resultMap="AllInfoResultMap"
+		parameterType="int">
+		select
+		u.*,a.*,c.*,l.label_id,l.label_name,bu.user_id
+		as
+		observer_id,bu.user_another_name as
+		observer_another_name,bu.user_head_sculpture as
+		observer_head_sculpture
+		from blog_articles a RIGHT JOIN blog_user u on
+		u.user_id =
+		a.articles_author_id left join blog_comment c on
+		c.comment_blog_id =
+		a.articles_id left join blog_user bu on
+		c.comment_observer_id =
+		bu.user_id left join blog_articles_label al on
+		a.articles_id =
+		al.articles_id left join blog_label l on al.label_id =
+		l.label_id where
+		a.articles_id = #{id}
+	</select>
+
+	<!-- 根据标签查找文章信息 -->
+	<select id="queryByLabel" resultMap="BaseResultMap">
+		select u.user_another_name author_name,a.* from blog_articles a left
+		join blog_user u on u.user_id = a.articles_author_id left join
+		blog_articles_label al on a.articles_id = al.articles_id left join
+		blog_label l on l.label_id = al.label_id where l.label_name = #{label}
+		and bal_state = 1 and label_state = 1 and articles_state = 1
+		<if test="first != null and limit != null">
+			limit #{first},#{limit}
+		</if>
+	</select>
+
+	<update id="update">
+		update blog_articles set articles_state = #{state}
+		where articles_id = #{id}
+	</update>
+
+	<select id="selectOneToUpdate" resultMap="BaseResultMap">
+		select
+		articles_id,articles_title,articles_content,articles_type from
+		blog_articles where articles_id = #{id} limit 1;
+	</select>
+</mapper>
